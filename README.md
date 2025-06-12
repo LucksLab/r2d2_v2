@@ -37,11 +37,11 @@ The main configuration object.
 
 | Key | Type | Default Value | Description |
 | --- | ---- | ------------- | ----------- |
-| `run_name` | String  |     | name/tag to use to label R2D2 run outputs |
-| `base_path` | String  | "." | folder into which to put working and results files |
+| `run_name` | String |     | name/tag to use to label R2D2 run outputs |
+| `base_path` | String | "." | folder into which to put working and results files |
 | `reactivity_file` | String | "`{run_name}.csv`" | `spats_tool` run output file |
-| `save_ensembles` | Boolean |  `false` | if `true`, save the entire ensemble  |
-| `endcut` | Integer | 0  | number of nucleotides to be removed from the 3' end (for adapters, linkers, primers, etc.); if positive, and if reactivies file is from an old spats run, theta/rho values will be re-calculated based on post-cut length |
+| `save_ensembles` | Boolean | `false` | if `true`, save the entire ensemble |
+| `endcut` | Integer | 0 | number of nucleotides to be removed from the 3' end (for adapters, linkers, primers, etc.); if positive, and if reactivies file is from an old spats run, theta/rho values will be re-calculated based on post-cut length |
 | `sampling_config` | [SamplingConfig](#SamplingConfig) | | JSON object, see below |
 | `free_energy_config` | [FreeEnergyConfig](#FreeEnergyConfig) | | JSON object, see below |
 | `distance_config` | [DistanceConfig](#DistanceConfig) | | JSON object, see below |
@@ -54,9 +54,9 @@ Configuration for how RNA structures ("samples") will be generated.
 
 | Key | Type | Default Value | Description |
 | --- | ---- | ------------- | ----------- |
-| `sample_gen` | String | "MemeRNA" | either "RNAstructure" or "MemeRNA".  generator to produce samples (defaults to use MemeRNA's subopt tool) |
+| `sample_gen` | String | "MemeRNA" | either "RNAstructure" or "MemeRNA". generator to produce samples (defaults to use MemeRNA's subopt tool) |
 | `num_ensembles` | Integer | 1 | number of structures to find at each length |
-| `sample_size` | Integer  | 50000 | number of samples to search through in an ensemble per method |
+| `sample_size` | Integer | 50000 | number of samples to search through in an ensemble per method |
 | `bias` | String | "shape" | options are:  "shape", "vanilla", "constrained", or "pooled" (which only works for RNAstructure sampling) |
 | `shape_slope` | Real | 1.1 | Slope used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |
 | `shape_intercept` | Real | -0.3 | Intercept used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |
@@ -70,7 +70,7 @@ Configuration options for how the Free Energy of a structure will be calculated.
 
 | Key | Type | Default Value | Description |
 | --- | ---- | ------------- | ----------- |
-| `free_energy_fn` | String | "MemeRNA" | either "RNAstructure" or "MemeRNA"  (defaults to use MemeRNA's efn tool) |
+| `free_energy_fn` | String | "MemeRNA" | either "RNAstructure" or "MemeRNA" (defaults to use MemeRNA's efn or subopt tool) |
 | `report_mfe` | Boolean  | `true` | if `true`, report the MFE struct in addition to the "best" struct; `false` saves time by not running efn or efn2 for every struct |
 
 
@@ -84,7 +84,7 @@ Configuration for how the "distance" between an RNA structure and a reactivity (
 | `scale_rho_max` | Real | 1.0 | If `cap_rhos` is `true` or the "D" distance is used, this value is the max value and all values greater than it are set to this max value |
 | `cap_rhos` | Boolean | `true` | Flag to use `scale_rho_max` as a cutoff for reactivities when calculating distances for choosing the best structure |
 | `scaling_fn` | String | "K" | Scaling to use when choosing the best structure: <ul><li>D: Bound reactivity to be between `[0,1]`</li><li>U: Rescale sampled structures to average to `1`</li><li>K: Keep sampled structures and reactivities values. If `cap_rhos` is `true`, then reactivities will be capped.</li></ul> |
-| `bases` | String | (all) |  Bases for which to compute distance (e.g., "AC" would just compute distances at nucleotieds with Adenine and Cytosine bases). |
+| `bases` | String | (all) | Bases for which to compute distance (e.g., "AC" would just compute distances at nucleotides with Adenine and Cytosine bases) |
 
 
 ### EnvVar
@@ -95,7 +95,7 @@ Environment variables to set. (Deprecated - should not be needed.)
 | --- | ---- | ------------- | ----------- |
 | `variable` |String | | name of an environment variable to set |
 | `value` | String | | value of environment variable |
-| `replace_existing` | Boolean | `false` |  if `false`, will append to existing variable using ':' as the separator |
+| `replace_existing` | Boolean | `false` | if `false`, will append to existing variable using ':' as the separator |
 
 
 
@@ -111,13 +111,13 @@ each ensemble are saved in [Python Pickle](https://docs.python.org/3/library/pic
 
 ### LengthResult
 
-Results for all ensembles generated for a nucleotide sequence of a specific length (`L`).  Saved in
+Results for all ensembles generated for a nucleotide sequence of a specific length (`L`). Saved in
 a file called "len{L}.json".
 
 | Key | Type | Description |
-| --- | ---- |  ----------- |
+| --- | ---- | ----------- |
 | `nt_seg` | String |nucleotide sequence of length L for which all structures here apply |
-| `ensembles` | [[Ensemble](#Ensemble)] |  JSON array of all ensembles generated for this length |
+| `ensembles` | [[Ensemble](#Ensemble)] | JSON array of all ensembles generated for this length |
 | `mfe_struct` | [Structure](#Structure) | minimum free energy structure found across all ensembles of this length |
 | `max_free_energy` | Real | maximum free energy found across all structures in all ensemble of this length |
 
@@ -140,7 +140,7 @@ Represents a possible structure of an RNA sequence of length `L`.
 | Key | Type | Description |
 | --- | ---- | ----------- |
 | `skey` | Integer | key that uniquely identifies this structure |
-| `pairings` | [Integer] | array of length `L` where value at index tells (1-based) index of nt base that index is paired with (or 0) |
+| `pairings` | [Integer] | array of length `L` where value at an index specifies the (1-based) index of nt base that this index is paired with (or 0) |
 | `free_energy` | Real | computed free energy for this secondary structure |
-| `rho_dist` | Real | distance from reactivity (rho) vector (as computed w/ [DistanceConfig](#DistanceConfig) params) |
+| `rho_dist` | Real | R2D2 "distance" from reactivity (rho) vector (as computed w/ [DistanceConfig](#DistanceConfig) params) |
 
