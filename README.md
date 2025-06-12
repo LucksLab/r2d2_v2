@@ -3,7 +3,7 @@
 
 R2D2 stands for "Reconstructing RNA Dynamics from Data".
 This is a rewrite of the original R2D2 code (which is [here](https://github.com/LucksLab/R2D2)) to slightly
-simplfiy it, use the updated [SPATS tool](https://github.com/LucksLab/spats) file formats for reactivity inputs,
+simplify it, use the updated [SPATS tool](https://github.com/LucksLab/spats) file formats for reactivity inputs,
 and add the ability to use/compare different RNA folding tools
 ([RNAstructure](https://rna.urmc.rochester.edu/RNAstructure.html) and [MemeRNA](https://github.com/Edgeworth/memerna), in particular).
 
@@ -11,8 +11,8 @@ and add the ability to use/compare different RNA folding tools
 ## Environment Notes
 
 - Spats v1/v2 and R2D2 v1 both use Python 2.7, but R2D2 v2 uses Python 3;
-    - It is expected that Spats v3 will be done in Python 3 and potentially more tightly integrated with R2D2.
-- Both MemeRNA and RNAstructure require some specific environment variables to be set first before running R2D2.
+    - It is expected that Spats v3 will be done in Python 3 and potentially be more tightly integrated with R2D2.
+- Both MemeRNA and RNAstructure require some specific environment variables to be set first before running R2D2.  [TODO]
 
 
 ## Configuration
@@ -41,7 +41,7 @@ The main configuration object.
 | `base_path` | String | "." | folder into which to put working and results files |
 | `reactivity_file` | String | "`{run_name}.csv`" | `spats_tool` run output file |
 | `save_ensembles` | Boolean | `false` | if `true`, save the entire ensemble |
-| `endcut` | Integer | 0 | number of nucleotides to be removed from the 3' end (for adapters, linkers, primers, etc.); if positive, and if reactivies file is from an old spats run, theta/rho values will be re-calculated based on post-cut length |
+| `endcut` | Integer | 0 | number of nucleotides to be removed from the 3' end (for adapters, linkers, primers, etc.); if positive, and if reactivities file is from an old spats run, theta/rho values will be re-calculated based on post-cut length |
 | `sampling_config` | [SamplingConfig](#SamplingConfig) | | JSON object, see below |
 | `free_energy_config` | [FreeEnergyConfig](#FreeEnergyConfig) | | JSON object, see below |
 | `distance_config` | [DistanceConfig](#DistanceConfig) | | JSON object, see below |
@@ -106,7 +106,7 @@ in both JSON and CT formats (e.g., `len119.json` and `len119.ct` files respectiv
 The JSON object types are described below.
 
 If the `save_ensembles` config option was specified as `true`, then all of the structures generated in
-each ensemble are saved in [Python Pickle](https://docs.python.org/3/library/pickle.html) file as well.
+each ensemble are saved in a [Python Pickle](https://docs.python.org/3/library/pickle.html) file as well.
 
 
 ### LengthResult
