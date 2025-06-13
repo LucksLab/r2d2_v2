@@ -42,10 +42,10 @@ The main configuration object.
 | `reactivity_file` | String | "`{run_name}.csv`" | `spats_tool` run output file |
 | `save_ensembles` | Boolean | `false` | if `true`, save the entire ensemble |
 | `endcut` | Integer | 0 | number of nucleotides to be removed from the 3' end (for adapters, linkers, primers, etc.); if positive, and if reactivities file is from an old spats run, theta/rho values will be re-calculated based on post-cut length |
-| `sampling_config` | [SamplingConfig](#SamplingConfig) | | JSON object, see below |
-| `free_energy_config` | [FreeEnergyConfig](#FreeEnergyConfig) | | JSON object, see below |
-| `distance_config` | [DistanceConfig](#DistanceConfig) | | JSON object, see below |
-| `env_vars` | [[EnvVar](#EnvVar)] | | JSON array of objects, see below |
+| `sampling_config` | JSON object | | see [SamplingConfig](#SamplingConfig) |
+| `free_energy_config` | JSON object | | see [FreeEnergyConfig](#FreeEnergyConfig) |
+| `distance_config` | JSON object | | see [DistanceConfig](#DistanceConfig) |
+| `env_vars` | JSON array of objects | | see [[EnvVar](#EnvVar)] |
 
 
 ### SamplingConfig
@@ -141,6 +141,6 @@ Represents a possible structure of an RNA sequence of length `L`.
 | --- | ---- | ----------- |
 | `skey` | Integer | key that uniquely identifies this structure |
 | `pairings` | [Integer] | array of length `L` where value at an index specifies the (1-based) index of nt base that this index is paired with (or 0) |
-| `free_energy` | Real | computed free energy for this secondary structure |
+| `free_energy` | Real | computed free energy for this secondary structure (as computed w/ [FreeEnergyConfig](#FreeEnergyConfig) params) |
 | `rho_dist` | Real | R2D2 "distance" from reactivity (rho) vector (as computed w/ [DistanceConfig](#DistanceConfig) params) |
 
