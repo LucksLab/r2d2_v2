@@ -1,4 +1,4 @@
-## Note:  the following code was originally auto-generated.  Modificaitons/additions here are strongly discouraged.
+## Note:  the following code was originally auto-generated.  Modifications/additions here are strongly discouraged.
 
 import base64
 import sys
