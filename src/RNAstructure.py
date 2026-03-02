@@ -100,6 +100,8 @@ class RNAstructure(LoggingClass):
             p.poll()
             if p.returncode:
                 raise Exception(p.stderr.read())
+            p.kill()
+            p = None
 
     def efn2(self, struct, seg, config):
         assert len(seg) == len(struct)
@@ -125,6 +127,7 @@ class RNAstructure(LoggingClass):
                 p.wait()
                 if p.returncode:
                     raise Exception(p.stderr.read())
+                p.kill()
             assert False, f"bad efn2 file for seg={seg} and struct={struct}"
 
     def reset_sampling(self):

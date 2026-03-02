@@ -62,6 +62,7 @@ Configuration for how RNA structures ("samples") will be generated.
 | `shape_intercept` | Real | -0.3 | Intercept used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |
 | `constrained_c` | Real | 3.5 | Any rho value greater than or equal to this value will be forced as unpaired when sampling with hard constraints |
 | `seed` | Integer | 1234 | pseudorandom numbers seed |
+| `no_bulge_states` | Boolean | `true` | when `true`, disable bulge loop states computation |
 
 
 ### FreeEnergyConfig
@@ -142,5 +143,6 @@ Represents a possible structure of an RNA sequence of length `L`.
 | `skey` | Integer | key that uniquely identifies this structure |
 | `pairings` | [Integer] | array of length `L` where value at an index specifies the (1-based) index of nt base that this index is paired with (or 0) |
 | `free_energy` | Real | computed free energy for this secondary structure (as computed w/ [FreeEnergyConfig](#FreeEnergyConfig) params) |
+| `probability` | Real | if the sampling/partitioning tool supports it, the probability of the structure (-1 if not) |
 | `rho_dist` | Real | R2D2 "distance" from reactivity (rho) vector (as computed w/ [DistanceConfig](#DistanceConfig) params) |
 

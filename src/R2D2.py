@@ -182,6 +182,7 @@ class R2D2(LoggingClass):
                 e['structs'] = {}    # don't write json below for all struct in ensemble too!
         write_json_to_path(json, f"{out_path}.json", pretty = True)
         self._results_to_ctfile(results, f"{out_path}.ct")
+        # TAI:  also write the config options used to out_dir for future ref?
         self.activity(f"wrote results to {out_path}.json and {out_path}.ct")
 
 
