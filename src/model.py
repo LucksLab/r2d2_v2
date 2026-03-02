@@ -8,15 +8,17 @@ from .fs import fs
 
 class SamplingConfig(object):
 
-    def __init__(self, sample_gen = None, num_ensembles = None, sample_size = None, bias = None, shape_slope = None, shape_intercept = None, constrained_c = None, seed = None):
+    def __init__(self, sample_gen = None, num_ensembles = None, sample_size = None, allow_duplicates = None, bias = None, shape_slope = None, shape_intercept = None, constrained_c = None, seed = None, no_bulge_states = None):
         self.sample_gen = sample_gen or ''  # type String
         self.num_ensembles = num_ensembles or 1  # type Integer
         self.sample_size = sample_size or 50000  # type Integer
+        self.allow_duplicates = allow_duplicates or False  # type Boolean
         self.bias = bias or "shape"  # type String
         self.shape_slope = shape_slope or 1.1  # type Real
         self.shape_intercept = shape_intercept or -0.3  # type Real
         self.constrained_c = constrained_c or 3.5  # type Real
         self.seed = seed or 1234  # type Integer
+        self.no_bulge_states = no_bulge_states or True  # type Real
 
     @property
     def typeName(self):
@@ -31,11 +33,13 @@ class SamplingConfig(object):
             'sample_gen' : self.sample_gen or '',
             'num_ensembles' : self.num_ensembles or 1,
             'sample_size' : self.sample_size or 50000,
+            'allow_duplicates' : self.allow_duplicates or False,
             'bias' : self.bias or "shape",
             'shape_slope' : self.shape_slope or 1.1,
             'shape_intercept' : self.shape_intercept or -0.3,
             'constrained_c' : self.constrained_c or 3.5,
             'seed' : self.seed or 1234,
+            'no_bulge_states' : self.no_bulge_states or True,
         }
 
     def __str__(self):
@@ -62,11 +66,13 @@ class SamplingConfig(object):
         self.sample_gen = json.get('sample_gen', '')
         self.num_ensembles = json.get('num_ensembles', 1)
         self.sample_size = json.get('sample_size', 50000)
+        self.allow_duplicates = json.get('allow_duplicates', False)
         self.bias = json.get('bias', "shape")
         self.shape_slope = json.get('shape_slope', 1.1)
         self.shape_intercept = json.get('shape_intercept', -0.3)
         self.constrained_c = json.get('constrained_c', 3.5)
         self.seed = json.get('seed', 1234)
+        self.no_bulge_states = json.get('no_bulge_states', True)
         return self
 
     def json(self, skipTypes = False, minimal = False, limit = -1):
@@ -78,20 +84,23 @@ class SamplingConfig(object):
         if ((self.sample_gen is not None) if minimal else (self.sample_gen)): d['sample_gen'] = self.sample_gen
         if ((self.num_ensembles is not None) if minimal else (self.num_ensembles)): d['num_ensembles'] = self.num_ensembles
         if ((self.sample_size is not None) if minimal else (self.sample_size)): d['sample_size'] = self.sample_size
+        if ((self.allow_duplicates is not None) if minimal else (self.allow_duplicates)): d['allow_duplicates'] = self.allow_duplicates
         if ((self.bias is not None) if minimal else (self.bias)): d['bias'] = self.bias
         if ((self.shape_slope is not None) if minimal else (self.shape_slope)): d['shape_slope'] = self.shape_slope
         if ((self.shape_intercept is not None) if minimal else (self.shape_intercept)): d['shape_intercept'] = self.shape_intercept
         if ((self.constrained_c is not None) if minimal else (self.constrained_c)): d['constrained_c'] = self.constrained_c
         if ((self.seed is not None) if minimal else (self.seed)): d['seed'] = self.seed
+        if ((self.no_bulge_states is not None) if minimal else (self.no_bulge_states)): d['no_bulge_states'] = self.no_bulge_states
         return d
 
 class DistanceConfig(object):
 
-    def __init__(self, weight_paired = None, scale_rho_max = None, cap_rhos = None, scaling_fn = None):
+    def __init__(self, weight_paired = None, scale_rho_max = None, cap_rhos = None, scaling_fn = None, bases = None):
         self.weight_paired = weight_paired or 0.8  # type Real
         self.scale_rho_max = scale_rho_max or 1.0  # type Real
         self.cap_rhos = cap_rhos or True  # type Boolean
         self.scaling_fn = scaling_fn or 'K'  # type String
+        self.bases = bases or ''  # type String
 
     @property
     def typeName(self):
@@ -107,6 +116,7 @@ class DistanceConfig(object):
             'scale_rho_max' : self.scale_rho_max or 1.0,
             'cap_rhos' : self.cap_rhos or True,
             'scaling_fn' : self.scaling_fn or 'K',
+            'bases' : self.bases or '',
         }
 
     def __str__(self):
@@ -134,6 +144,7 @@ class DistanceConfig(object):
         self.scale_rho_max = json.get('scale_rho_max', 1.0)
         self.cap_rhos = json.get('cap_rhos', True)
         self.scaling_fn = json.get('scaling_fn', 'K')
+        self.bases = json.get('bases', '')
         return self
 
     def json(self, skipTypes = False, minimal = False, limit = -1):
@@ -146,6 +157,7 @@ class DistanceConfig(object):
         if ((self.scale_rho_max is not None) if minimal else (self.scale_rho_max)): d['scale_rho_max'] = self.scale_rho_max
         if ((self.cap_rhos is not None) if minimal else (self.cap_rhos)): d['cap_rhos'] = self.cap_rhos
         if ((self.scaling_fn is not None) if minimal else (self.scaling_fn)): d['scaling_fn'] = self.scaling_fn
+        if ((self.bases is not None) if minimal else (self.bases)): d['bases'] = self.bases
         return d
 
 class FreeEnergyConfig(object):
@@ -264,7 +276,7 @@ class EnvVar(object):
 
 class R2D2Config(object):
 
-    def __init__(self, run_name = None, base_path = None, reactivity_file = None, save_ensembles = None, env_vars = None, sampling_config = None, free_energy_config = None, distance_config = None):
+    def __init__(self, run_name = None, base_path = None, reactivity_file = None, save_ensembles = None, env_vars = None, sampling_config = None, free_energy_config = None, distance_config = None, endcut = None):
         self.run_name = run_name or ''  # type String
         self.base_path = base_path or ''  # type String
         self.reactivity_file = reactivity_file or ''  # type String
@@ -273,6 +285,7 @@ class R2D2Config(object):
         self.sampling_config = sampling_config or None  # type SamplingConfig
         self.free_energy_config = free_energy_config or None  # type FreeEnergyConfig
         self.distance_config = distance_config or None  # type DistanceConfig
+        self.endcut = endcut or 0  # type Integer
 
     @property
     def typeName(self):
@@ -292,6 +305,7 @@ class R2D2Config(object):
             'sampling_config' : self.sampling_config or None,
             'free_energy_config' : self.free_energy_config or None,
             'distance_config' : self.distance_config or None,
+            'endcut' : self.endcut or 0,
         }
 
     def __str__(self):
@@ -323,6 +337,7 @@ class R2D2Config(object):
         self.sampling_config = SamplingConfig().loadFromJson(json.get('sampling_config'), skipNull = skipNull) if ((not skipNull) or json.get('sampling_config')) else None
         self.free_energy_config = FreeEnergyConfig().loadFromJson(json.get('free_energy_config'), skipNull = skipNull) if ((not skipNull) or json.get('free_energy_config')) else None
         self.distance_config = DistanceConfig().loadFromJson(json.get('distance_config'), skipNull = skipNull) if ((not skipNull) or json.get('distance_config')) else None
+        self.endcut = json.get('endcut', 0)
         return self
 
     def json(self, skipTypes = False, minimal = False, limit = -1):
@@ -339,15 +354,18 @@ class R2D2Config(object):
         if ((self.sampling_config is not None) if minimal else (self.sampling_config)): d['sampling_config'] = self.sampling_config.json(skipTypes = skipTypes, minimal = minimal, limit = limit - 1) if hasattr(self.sampling_config, 'json') else id(self.sampling_config)
         if ((self.free_energy_config is not None) if minimal else (self.free_energy_config)): d['free_energy_config'] = self.free_energy_config.json(skipTypes = skipTypes, minimal = minimal, limit = limit - 1) if hasattr(self.free_energy_config, 'json') else id(self.free_energy_config)
         if ((self.distance_config is not None) if minimal else (self.distance_config)): d['distance_config'] = self.distance_config.json(skipTypes = skipTypes, minimal = minimal, limit = limit - 1) if hasattr(self.distance_config, 'json') else id(self.distance_config)
+        if ((self.endcut is not None) if minimal else (self.endcut)): d['endcut'] = self.endcut
         return d
 
 class Structure(object):
 
-    def __init__(self, skey = None, pairings = None, free_energy = None, rho_dist = None):
+    def __init__(self, skey = None, pairings = None, free_energy = None, probability = None, rho_dist = None, instance = None):
         self.skey = skey or 0  # type Integer
         self.pairings = pairings or []  # type [Integer]
         self.free_energy = free_energy or 0.0  # type Real
+        self.probability = probability or -1  # type Real
         self.rho_dist = rho_dist or -1  # type Real
+        self.instance = instance or 1  # type Integer
 
     @property
     def typeName(self):
@@ -362,7 +380,9 @@ class Structure(object):
             'skey' : self.skey or 0,
             'pairings' : self.pairings or [],
             'free_energy' : self.free_energy or 0.0,
+            'probability' : self.probability or -1,
             'rho_dist' : self.rho_dist or -1,
+            'instance' : self.instance or 1,
         }
 
     def __str__(self):
@@ -389,7 +409,9 @@ class Structure(object):
         self.skey = json.get('skey', 0)
         self.pairings = list(json.get('pairings', []))
         self.free_energy = json.get('free_energy', 0.0)
+        self.probability = json.get('probability', -1)
         self.rho_dist = json.get('rho_dist', -1)
+        self.instance = json.get('instance', 1)
         return self
 
     def json(self, skipTypes = False, minimal = False, limit = -1):
@@ -401,7 +423,9 @@ class Structure(object):
         if ((self.skey is not None) if minimal else (self.skey)): d['skey'] = self.skey
         if ((self.pairings is not None) if minimal else (self.pairings)): d['pairings'] = self.pairings
         if ((self.free_energy is not None) if minimal else (self.free_energy)): d['free_energy'] = self.free_energy
+        if ((self.probability is not None) if minimal else (self.probability)): d['probability'] = self.probability
         if ((self.rho_dist is not None) if minimal else (self.rho_dist)): d['rho_dist'] = self.rho_dist
+        if ((self.instance is not None) if minimal else (self.instance)): d['instance'] = self.instance
         return d
 
 class Ensemble(object):
