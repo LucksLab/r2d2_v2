@@ -12,7 +12,16 @@ and add the ability to use/compare different RNA folding tools
 
 - Spats v1/v2 and R2D2 v1 both use Python 2.7, but R2D2 v2 uses Python 3;
     - It is expected that Spats v3 will be done in Python 3 and potentially be more tightly integrated with R2D2.
-- Both MemeRNA and RNAstructure require some specific environment variables to be set first before running R2D2.  [TODO]
+- Both MemeRNA and RNAstructure require some specific environment variables to be set first before running R2D2A.  These include:
+    - `PATH` should be set to include the folder(s) where the RNAstructure `partition`, `efn2` and `stochastic` binaries are (and/or the "-smp" versions of these);
+    - `DATAPATH` should be set to the path of the RNAstructure data tables as described [here](https://rna.urmc.rochester.edu/Text/Thermodynamics.html);
+    - `OMP_NUM_THREADS` may be used to specify the number of cores to use for all RNAstructure tools;
+    - `MRNA_DIST` should be set to include the folder(s) where the memerna `partition` and `subopt` binaries are;
+    - `MRNA_DATA` should be set to the path of the memerna data folder.
+- An example command line for running R2D2 is:
+    - `python3 -m r2d2_v2 [config_path] [base_path]`
+        - `[config_path]` can optionally be used to specify an alternate path to the `r2d2.json` config file (the default is "`[base_path]/r2d2.json`");
+        - `[base_path]` can optionally be used to specify an alternate working folder and output path (the default is "`.`");
 
 
 ## Configuration
