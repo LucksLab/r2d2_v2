@@ -66,7 +66,7 @@ Configuration for how RNA structures ("samples") will be generated.
 | `sample_gen` | String | "MemeRNA" | either "RNAstructure" or "MemeRNA". generator to produce samples (defaults to use MemeRNA's subopt tool) |
 | `num_ensembles` | Integer | 1 | number of structures to find at each length |
 | `sample_size` | Integer | 50000 | number of samples to search through in an ensemble per method |
-| `allow_duplicates` | Boolean | `false` |  if `true`, ... |
+| `allow_duplicates` | Boolean | `false` |  If `true`, then all structures are added to the ensemble, even if they've been sampled before.  This only makes sense for stochastic sampling tools (such as RNAstructure). |
 | `bias` | String | "shape" | options are:  "shape", "vanilla", "constrained", or "pooled" (which only works for RNAstructure sampling) |
 | `shape_slope` | Real | 1.1 | Slope used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |
 | `shape_intercept` | Real | -0.3 | Intercept used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |
@@ -155,4 +155,5 @@ Represents a possible structure of an RNA sequence of length `L`.
 | `free_energy` | Real | computed free energy for this secondary structure (as computed w/ [FreeEnergyConfig](#FreeEnergyConfig) params) |
 | `probability` | Real | if the sampling/partitioning tool supports it, the probability of the structure (-1 if not) |
 | `rho_dist` | Real | R2D2 "distance" from reactivity (rho) vector (as computed w/ [DistanceConfig](#DistanceConfig) params) |
+| `instance` | Integer | Only used if `allow_duplicates` is true in the [SamplingConfig](#SamplingConfig). If so, then this records whether this is the first, second, third, etc. time this structure has been sampled.  |
 
