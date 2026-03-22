@@ -66,6 +66,7 @@ Configuration for how RNA structures ("samples") will be generated.
 | `sample_gen` | String | "MemeRNA" | either "RNAstructure" or "MemeRNA". generator to produce samples (defaults to use MemeRNA's subopt tool) |
 | `num_ensembles` | Integer | 1 | number of structures to find at each length |
 | `sample_size` | Integer | 50000 | number of samples to search through in an ensemble per method |
+| `allow_duplicates` | Boolean | `false` |  if `true`, ... |
 | `bias` | String | "shape" | options are:  "shape", "vanilla", "constrained", or "pooled" (which only works for RNAstructure sampling) |
 | `shape_slope` | Real | 1.1 | Slope used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |
 | `shape_intercept` | Real | -0.3 | Intercept used to convert SHAPE reactivities to `pf` energy biases:  `pf = m * ln[rho] + b` |

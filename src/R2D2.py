@@ -238,13 +238,15 @@ class _R2D2Worker(LoggingClass):
             self.warn(f"possible config issue?  unable to find function '{fn_str}' for {key}")
         return None
 
-    def _sample_unique_structs(self, nt_seg, rho_seg):
+    def _sample_structs(self, nt_seg, rho_seg, allow_dups = False):
         seen = set()  # note:  not using struct_cache for this b/c this could be in a pool
         for s in self._sample_gen(nt_seg, rho_seg, self._config.sampling_config):
-            if s.skey not in seen:
+            if allow_dups:
+                yield s
+            elif s.skey not in seen:
                 seen.add(s.skey)
                 yield s
-        self.debug(f"found {len(seen)} unique structs (l={len(nt_seg)})")
+        self.debug(f"found {len(seen)} {'' if allow_dups else 'unique'} structs (l={len(nt_seg)})")
 
     @staticmethod
     def cap_vec(vec, max_v):
@@ -299,6 +301,7 @@ class _R2D2Worker(LoggingClass):
     def _do_struct(self, sample):
         struct, nt_seg, scaled_rho_seg = sample
         if struct.rho_dist >= 0.0:
+            assert False
             return struct, False
         if self._config.free_energy_config.report_mfe  and  self._free_energy_fn:
             struct.free_energy = self._free_energy_fn(struct.pairings, nt_seg, self._config.free_energy_config)
@@ -308,11 +311,20 @@ class _R2D2Worker(LoggingClass):
 
     def _caching_sample_gen(self, struct_cache, nt_seg, rho_seg, scaled_rho_seg):
         pool_size = max(os.cpu_count() - 1, 1)
+        allow_dups = self._config.sampling_config.allow_duplicates
         # note:  if saving structures in the ensemble, want them to be in the order for now, so can't pool in that case.
         if not self._in_pool  and  pool_size > 1  and  not self._config.save_ensembles:
             def sample_getter():
-                for s in self._sample_unique_structs(nt_seg, rho_seg):
-                    struct = struct_cache.get(s.skey, s)
+                for s in self._sample_structs(nt_seg, rho_seg, allow_dups):
+                    if not allow_dups:
+                        struct = struct_cache.get(s.skey, s)
+                    else:
+                        # This is after-the-fact hack (due to feature creep)
+                        struct = s
+                        while s.skey in struct_cache:
+                            assert struct_cache[s.skey].pairings == s.pairings
+                            s.skey += 1    # XXX: this is risky, hence the assert above...
+                            s.instance += 1
                     yield struct, nt_seg, scaled_rho_seg
             self.activity(f"spawning {pool_size} free-energy workers")
             mp_ctx = mp.get_context('spawn')
@@ -320,8 +332,16 @@ class _R2D2Worker(LoggingClass):
                 for struct, new in pool.imap_unordered(self._do_struct, sample_getter()):
                     yield struct, new
         else:
-            for s in self._sample_unique_structs(nt_seg, rho_seg):
-                struct = struct_cache.get(s.skey, s)
+            for s in self._sample_structs(nt_seg, rho_seg, allow_dups):
+                if not allow_dups:
+                    struct = struct_cache.get(s.skey, s)
+                else:
+                    # This is after-the-fact hack (due to feature creep)
+                    struct = s
+                    while s.skey in struct_cache:
+                        assert struct_cache[s.skey].pairings == s.pairings
+                        s.skey += 1    # XXX: this is risky, hence the assert above...
+                        s.instance += 1
                 yield self._do_struct((struct, nt_seg, scaled_rho_seg))
 
     def find_best_structs(self, nt_seg, rho_seg):
