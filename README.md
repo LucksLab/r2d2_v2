@@ -7,6 +7,10 @@ simplify it, use the updated [SPATS tool](https://github.com/LucksLab/spats) fil
 and add the ability to use/compare different RNA folding tools
 ([RNAstructure](https://rna.urmc.rochester.edu/RNAstructure.html) and [MemeRNA](https://github.com/Edgeworth/memerna), in particular).
 
+This repository is referenced in the publication:
+
+- Courtney, E.; Choi, E.; Lucks, J.; Ward, M.  (2026).  "Efficient and Scalable Modelling of Co-Transcriptional RNA Folding with Deterministic and Iterative RNA Structure Sampling". [bioRxiv](https://biorxiv.org) FORTHCOMING.
+
 
 ## Environment Notes
 
